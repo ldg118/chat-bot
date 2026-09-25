@@ -1,0 +1,29 @@
+name = "chat-bot"
+main = "worker.js"
+compatibility_date = "2023-10-30"
+
+# D1 database binding (replaces the old KV namespace).
+# Create it with: wrangler d1 create mirrotalk
+# then paste the returned database_id below. Tables are created automatically
+# on first request (no manual migration needed).
+[[d1_databases]]
+binding = "DB"
+database_name = "chat-bot"
+database_id = "22b9b635-6fd7-43f7-abaa-3b498ca97477"
+
+# Daily cleanup of expired dedupe hashes (UTC).
+[triggers]
+crons = ["0 0 * * *"]
+
+[vars]
+# --- Single-bot config: treated as bot id "default", webhook path /endpoint ---
+ENV_BOT_TOKEN = "7787459652:AAHhsCCM617BH96CrcbrlVj20CNsj0plxdc"
+ENV_BOT_SECRET = "44b8dced-0de6-4b1e-8f5d-de3385e87e97"
+ENV_ADMIN_UID = "6351704364"
+ENV_ENABLE_TOPIC_GROUP = "true"
+ENV_SUPERGROUP_ID = "-1002590967190"
+ENV_MAX_MSG_PER_MIN = 40
+
+# --- Multi-bot: managed entirely from the admin panel via /bot commands (stored in D1) ---
+# No Cloudflare config needed. Add a bot with:  /bot add <id> <token> <admin_uid> [sg] [topic] [max]
+# Then register its webhook:  https://<worker-domain>/registerWebhook/{id}
